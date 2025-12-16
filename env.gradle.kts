@@ -3,6 +3,7 @@ import java.util.Date
 
 // 1. 파일 경로 설정
 val envFile = file("$rootDir/.env")
+val logYml = file("$rootDir/src/main/resources/application-log.yml")
 
 // 2. env.local 파일이 없으면 자동 생성 (UTF-8)
 if (!envFile.exists()) {
@@ -29,4 +30,14 @@ if (!envFile.exists()) {
         JWT.ISSUER=보통도메인으로설정합니다
     """.trimIndent(), StandardCharsets.UTF_8)
     println("✅ [Gradle] '${envFile.name}' 파일이 생성되었습니다.")
+}
+
+if (!logYml.exists()) {
+    val today = Date().toString()
+    logYml.writeText("""
+        logging:
+          level:
+            root: info
+    """.trimIndent(), StandardCharsets.UTF_8)
+    println("✅ [Gradle] '${logYml.name}' 파일이 생성되었습니다.")
 }

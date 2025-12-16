@@ -19,7 +19,7 @@ public class CorsConfig {
                                 "https://hospital.jnsoo-pp.workers.dev", // 로컬로컬
                                 "https://jnsoo.iptime.org:34000", // 로컬로컬
                                 "http://jnsoo.iptime.org:34000" // 로컬로컬
-                                )  // 개발/운영
+                        )  // 개발/운영
                         .allowedMethods("*")               // GET, POST, PUT, DELETE ...
                         .allowCredentials(true);          // 쿠키 허용
             }

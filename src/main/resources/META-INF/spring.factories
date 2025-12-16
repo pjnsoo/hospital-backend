@@ -1,1 +1,1 @@
-org.springframework.boot.EnvironmentPostProcessor=org.hospital.DotEnvPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=org.hospital.DotEnvPostProcessor

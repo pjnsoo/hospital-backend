@@ -43,10 +43,13 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    // DB 접속이 필요하다면
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.6")
 
