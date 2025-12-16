@@ -9,6 +9,7 @@ MAIN_CLASS=org.hospital.BackendServer
 
 echo PROJECT_HOME: ["$PROJECT_HOME"]
 
+cd $PROJECT_HOME
 . $PROJECT_HOME/bin/env.sh
 
 export LOG_FILE=${PROCESS_NAME}

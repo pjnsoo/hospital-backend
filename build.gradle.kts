@@ -82,5 +82,5 @@ tasks.register<Copy>("downloadDependencies") {
     from(configurations.runtimeClasspath)
 //    println("${layout.buildDirectory}")
     // 저장할 디렉토리
-    into(layout.buildDirectory.dir("dependencies"))
+    into(layout.buildDirectory.dir("dependencies/libs"))
 }
