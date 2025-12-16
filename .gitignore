@@ -44,5 +44,6 @@ bin/
 /src/main/resources/application-local.yml
 /logs/
 /.idea/
-/src/main/resources/.env
+/src/main/resources
+/.env
 /cert/

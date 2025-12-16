@@ -17,6 +17,7 @@ idea {
                 file("gradle"),
                 file("logs"),
                 file("cert"),
+                file("ddl"),
             )
         )
     }
