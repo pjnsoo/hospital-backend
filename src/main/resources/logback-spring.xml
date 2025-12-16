@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" scanPeriod="30 seconds">
+    <!-- 로그레벨은 프로세스별 설정파일에서 변경할 것
+    <property name="LEVEL" value="info"/>-->
+
+    <property name="logFile" value="${LOG_FILE:-local}"/>
+    <property name="logPath" value="${LOG_PATH:-logs}"/>
+    <property name="FILE_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread] %-5level [%logger{35}.%method:%line] -- %msg%n"/>
+
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${logFile}.log</file>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/${logFile}.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <root level="${logging.level.root:-INFO}">
+        <appender-ref ref="ROLLING" />
+        <!-- 운영 배포시 아래 라인 제거 -->
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

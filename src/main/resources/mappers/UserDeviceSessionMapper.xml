@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hospital.mapper.UserSessionMapper">
+
+    <insert id="insert">
+        INSERT INTO user_device_session
+            (username, jti, issued_at, expires_at, revoked, user_agent, ip)
+        VALUES
+            (#{username}, #{jti}, #{issuedAt}, #{expiresAt}, #{revoked}, #{userAgent}, #{ip})
+        on duplicate key update
+
+    </insert>
+
+    <select id="findLatestByUsername">
+        SELECT *
+        FROM auth_refresh_token
+        WHERE username = #{username}
+          AND revoked = false
+        ORDER BY issued_at DESC
+            LIMIT 1
+    </select>
+
+    <select id="findByJti">
+        SELECT *
+        FROM auth_refresh_token
+        WHERE jti = #{jti}
+            LIMIT 1
+    </select>
+
+    <update id="revokeByJti">
+        UPDATE auth_refresh_token
+        SET revoked = true
+        WHERE jti = #{jti}
+    </update>
+
+</mapper>

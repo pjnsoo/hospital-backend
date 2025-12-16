@@ -1,0 +1,40 @@
+hostname: ${HOSTNAME:${HOST:${COMPUTERNAME:unknown}}}
+
+server:
+  port: 8080
+
+spring:
+  jackson:
+    time-zone: Asia/Seoul
+
+  datasource:
+    # 드라이버 클래스 (생략 가능, URL 보고 스프링이 자동 추론함)
+    driver-class-name: org.mariadb.jdbc.Driver
+    # URL (환경 변수 DB_URL 사용)
+    url: ${DB.URL}?sessionVariables=tx_isolation='READ-COMMITTED'&allowMultiQueries=true
+    # 계정 정보
+    username: ${DB.USERNAME}
+    # 비밀번호 (환경 변수에 ENC(...)를 넣으면 Jasypt가 자동으로 복호화함)
+    password: ${DB.PASSWORD}
+
+    # HikariCP 상세 설정 (스프링 부트 기본 커넥션 풀)
+    hikari:
+      connection-init-sql: select 1
+      connection-test-query: select 1
+      maximum-pool-size: 100
+      minimum-idle: 1
+
+mybatis:
+  mapper-locations: classpath:/mappers/**/*.xml
+  configuration:
+    jdbc-type-for-null: null
+    map-underscore-to-camel-case: on
+
+jwt:
+  secret: ${JWT.SECRET}
+  issuer: ${JWT.ISSUER}
+  access-token-expire-minutes: 10
+  refresh-token-expire-days: 7
+
+
+
