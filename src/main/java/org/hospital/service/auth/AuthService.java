@@ -1,12 +1,12 @@
-package org.hospital.service;
+package org.hospital.service.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.hospital.dto.AuthTokenDto;
-import org.hospital.dto.LoginCommand;
-import org.hospital.entity.UserAccount;
-import org.hospital.entity.UserSession;
-import org.hospital.mapper.UserAccountMapper;
-import org.hospital.mapper.UserSessionMapper;
+import org.hospital.service.dto.AuthTokenDto;
+import org.hospital.service.dto.LoginCommand;
+import org.hospital.model.mapper.UserSessionMapper;
+import org.hospital.model.table.UserAccount;
+import org.hospital.model.table.UserSession;
+import org.hospital.model.mapper.UserAccountMapper;
 import org.hospital.util.jwt.JwtUtil;
 import org.hospital.util.jwt.JwtVo;
 import org.hospital.util.jwt.TokenType;

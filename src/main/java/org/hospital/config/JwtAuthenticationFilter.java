@@ -1,4 +1,4 @@
-package org.hospital;
+package org.hospital.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,8 +1,7 @@
-package org.hospital;
+package org.hospital.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.hospital.dto.UserSignUpRequest; // DTO 객체 필요
-import org.hospital.service.UserService;
+import org.hospital.service.dto.UserSignUpRequest; // DTO 객체 필요
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

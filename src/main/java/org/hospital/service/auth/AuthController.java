@@ -1,12 +1,11 @@
-package org.hospital;
+package org.hospital.service.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hospital.dto.AuthTokenDto;
-import org.hospital.dto.LoginCommand;
-import org.hospital.dto.LoginRequest;
-import org.hospital.service.AuthService;
+import org.hospital.service.dto.AuthTokenDto;
+import org.hospital.service.dto.LoginCommand;
+import org.hospital.service.dto.LoginRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;

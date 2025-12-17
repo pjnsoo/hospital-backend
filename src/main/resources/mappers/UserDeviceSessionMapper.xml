@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.hospital.mapper.UserSessionMapper">
+<mapper namespace="org.hospital.model.mapper.UserSessionMapper">
     <select id="sel">select 1</select>
 
 <!--    <insert id="insert">-->

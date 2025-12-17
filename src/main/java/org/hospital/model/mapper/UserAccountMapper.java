@@ -1,7 +1,7 @@
-package org.hospital.mapper;
+package org.hospital.model.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.hospital.entity.UserAccount;
+import org.hospital.model.table.UserAccount;
 
 @Mapper
 public interface UserAccountMapper {

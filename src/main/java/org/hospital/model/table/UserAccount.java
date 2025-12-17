@@ -1,4 +1,4 @@
-package org.hospital.entity;
+package org.hospital.model.table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,17 +12,13 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSession {
+public class UserAccount {
     long userNo;
-    String jti;
-    String platform;
-    String deviceId;
-    String pushToken;
-    Instant issuedAt;
-    Instant expiresAt;
-    boolean revoked;
-    String userAgent;
-    String ip;
+    String username;
+    String password;
+    String nickname;
+    String role;
+    String status;
     Instant createdAt;
     Instant updatedAt;
 }

@@ -1,9 +1,9 @@
-package org.hospital.service;
+package org.hospital.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.hospital.dto.UserSignUpRequest;
-import org.hospital.entity.UserAccount;
-import org.hospital.mapper.UserAccountMapper;
+import org.hospital.service.dto.UserSignUpRequest;
+import org.hospital.model.mapper.UserAccountMapper;
+import org.hospital.model.table.UserAccount;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

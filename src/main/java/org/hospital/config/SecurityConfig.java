@@ -1,4 +1,4 @@
-package org.hospital;
+package org.hospital.config;
 
 import org.hospital.util.jwt.JwtUtil;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package org.hospital.mapper;
+package org.hospital.model.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

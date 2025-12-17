@@ -1,4 +1,4 @@
-package org.hospital;
+package org.hospital.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;

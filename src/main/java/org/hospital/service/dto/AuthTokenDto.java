@@ -1,4 +1,4 @@
-package org.hospital.dto;
+package org.hospital.service.dto;
 
 import lombok.Builder;
 import lombok.Getter;
