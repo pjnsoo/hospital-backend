@@ -1,4 +1,4 @@
-package org.hospital.service.dto;
+package org.hospital.service.auth;
 
 import lombok.Builder;
 import lombok.Getter;

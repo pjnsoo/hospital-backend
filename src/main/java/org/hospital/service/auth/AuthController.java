@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hospital.service.dto.AuthTokenDto;
-import org.hospital.service.dto.LoginCommand;
 import org.hospital.service.dto.LoginRequest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,14 +62,17 @@ public class AuthController {
     public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken", required = false) String refreshToken,
                                      HttpServletRequest httpReq) {
         if (refreshToken == null || refreshToken.isBlank()) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         try {
+
             AuthTokenDto tokenDto = authService.refresh(
                     refreshToken,
                     httpReq.getRemoteAddr(),
-                    httpReq.getHeader("User-Agent")
+                    httpReq.getHeader("User-Agent"),
+                    getOrDefault(httpReq.getHeader("Device-Id"), ""),
+                    getOrDefault(httpReq.getHeader("Platform"), "WEB")
             );
 
             ResponseCookie cookie = createRefreshTokenCookie(
@@ -85,7 +88,7 @@ public class AuthController {
         } catch (Exception e) {
             // 실패 시 쿠키 삭제
             ResponseCookie deleteCookie = createRefreshTokenCookie("", httpReq, Duration.ZERO);
-            return ResponseEntity.status(401)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
                     .build();
         }
@@ -97,14 +100,21 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@CookieValue(value = "refreshToken", required = false) String refreshToken,
                                     HttpServletRequest httpReq) {
-        if (refreshToken != null) {
-            authService.logout(refreshToken);
+        try {
+            if (refreshToken != null && !refreshToken.isBlank()) {
+                authService.logout(refreshToken);
+            }
+        } catch (Exception e) {
+            // DB 에러가 나더라도 로그만 찍고, 클라이언트의 쿠키는 반드시 지워줘야 함
+            log.error("로그아웃 DB 처리 실패: {}", e.getMessage());
         }
 
+        // 쿠키 삭제는 무조건 실행 (그래야 사용자 화면이 바뀜)
         ResponseCookie cookie = createRefreshTokenCookie("", httpReq, Duration.ZERO);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+                .body(Map.of("message", "success"));
     }
 
     // 🛠️ Helper Methods

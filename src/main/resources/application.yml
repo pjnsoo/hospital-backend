@@ -3,7 +3,6 @@ hostname: ${HOSTNAME:${HOST:${COMPUTERNAME:unknown}}}
 server:
   port: 8080
   http2.enabled: on
-  tomcat.threads.max: 200
 
 jwt:
   access-token-expire-minutes: 10

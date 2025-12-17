@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hospital.model.mapper.UserAccountMapper">
+
+    <select id="findByUsername">
+        select user_no,
+               username,
+               password,
+               nickname,
+               role,
+               status,
+               created_at,
+               updated_at
+        from user_account
+        where username = #{username}
+
+    </select>
+
+    <insert id="updateSession" parameterType="org.hospital.model.table.UserSession">
+        insert into user_session (user_no, platform, device_id, jti, push_token,
+                                  issued_at, expires_at, revoked, user_agent, ip,
+                                  created_at, updated_at)
+        values (#{userNo}, #{platform}, #{deviceId}, #{jti}, #{pushToken},
+                #{issuedAt}, #{expiresAt}, #{revoked}, #{userAgent}, #{ip},
+                now(3), now(3))
+        on duplicate key update jti        = values(jti),
+                                issued_at  = values(issued_at),
+                                expires_at = values(expires_at),
+                                revoked    = values(revoked),
+                                user_agent = values(user_agent),
+                                ip         = values(ip)
+    </insert>
+
+    <update id="rotateRefreshToken">
+        update user_session
+        set jti        = #{newJti},
+            issued_at  = #{issuedAt},
+            expires_at = #{expiresAt},
+            ip         = #{ip},
+            user_agent = #{userAgent}
+        where jti = #{oldJti}
+          and device_id = #{deviceId}
+          and revoked = 0
+          and expires_at > now(3)
+    </update>
+
+    <update id="revokeByJti">
+        update user_session
+        set revoked = 1
+        where jti = #{jti}
+          and revoked = 0 -- 이미 취소된 건 건드리지 않음
+    </update>
+
+</mapper>
