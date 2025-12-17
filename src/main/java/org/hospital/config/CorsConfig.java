@@ -27,10 +27,10 @@ public class CorsConfig {
                         .allowedMethods("*")               // GET, POST, PUT, DELETE ...
                         .allowCredentials(true);          // 쿠키 허용
 
-                // 1. Jasypt 암호화 API: 오직 localhost 8080만 허용 (보안 강화)
-                registry.addMapping("/local/*")
-                        .allowedOrigins("http://localhost:" + port)
-                        .allowedMethods("POST");
+//                // 1. Jasypt 암호화 API: 오직 localhost 8080만 허용 (보안 강화)
+//                registry.addMapping("/local/*")
+//                        .allowedOrigins("http://localhost:" + port)
+//                        .allowedMethods("POST");
             }
         };
     }
