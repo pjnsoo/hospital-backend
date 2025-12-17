@@ -23,7 +23,7 @@ if (!envFile.exists()) {
         DB.PASSWORD=password
         
         # [Encryption]
-        JASYPT_ENCRYPTOR_PASSWORD=복호화키를설정하세요
+        jasypt.encryptor.password=복호화키를설정하세요
         
         # [Security]
         JWT.SECRET=시크릿키설정하세요

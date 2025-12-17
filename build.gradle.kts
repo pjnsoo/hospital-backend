@@ -15,9 +15,10 @@ idea {
             listOf(
                 file(".idea"),
                 file("gradle"),
+                file("ddl"),
+                file("script"),
                 file("logs"),
                 file("cert"),
-                file("ddl"),
             )
         )
     }
