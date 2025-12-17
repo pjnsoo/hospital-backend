@@ -3,7 +3,7 @@ import java.util.Date
 
 // 1. 파일 경로 설정
 val envFile = file("$rootDir/.env")
-val logYml = file("$rootDir/src/main/resources/application-log.yml")
+val logYml = file("$rootDir/src/main/resources/log-level.yml")
 
 // 2. env.local 파일이 없으면 자동 생성 (UTF-8)
 if (!envFile.exists()) {
