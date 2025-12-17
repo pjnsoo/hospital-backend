@@ -1,36 +1,25 @@
 package org.hospital.local;
 
-import org.hospital.model.mapper.UserSessionMapper;
 import org.jasypt.encryption.StringEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LocalEncryptController {
 
     private final StringEncryptor jasyptStringEncryptor;
 
-    @Autowired
-    UserSessionMapper userSessionMapper;
-
     public LocalEncryptController(StringEncryptor jasyptStringEncryptor) {
         this.jasyptStringEncryptor = jasyptStringEncryptor;
     }
 
-    @PostMapping("/local/encrypt")
-    public Map<String, String> encrypt(@RequestBody Map<String, String> request) {
-        userSessionMapper.sel(null);
-        String plainText = request.get("plainText");
+    @GetMapping("/local/encrypt/{plainText}")
+    public String encrypt(@PathVariable String plainText) {
+
+        /* Jasypt 라이브러리를 사용한 평문 암호화 수행 */
         String encryptedText = jasyptStringEncryptor.encrypt(plainText);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("plainText", plainText);
-        response.put("encryptedText", "ENC(" + encryptedText + ")");
-        return response;
+        /* 결과 반환을 위한 Map 객체 생성 및 데이터 삽입 */
+//        Map<String, String> response = new HashMap<>();
+        return "ENC(%s)".formatted(encryptedText);
     }
 }

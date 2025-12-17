@@ -21,8 +21,13 @@ spring:
   threads.virtual.enabled: on
   jackson.time-zone: Asia/Seoul
 
+  servlet.encoding:
+    charset: UTF-8
+    enabled: true
+    force: true  # 응답 헤더에 강제로 UTF-8을 박아버립니다.
+
   config.import:
-      - log-level.yml
+    - log-level.yml
 
   datasource:
     # 드라이버 클래스 (생략 가능, URL 보고 스프링이 자동 추론함)
