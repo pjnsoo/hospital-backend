@@ -1,4 +1,4 @@
-package org.hospital.util.jwt;
+package org.hospital.component.jwt;
 
 import lombok.Builder;
 import lombok.Data;

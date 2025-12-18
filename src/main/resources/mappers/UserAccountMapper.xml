@@ -9,7 +9,6 @@
         select user_no,
                username,
                password,
-               nickname,
                role,
                status,
                created_at,

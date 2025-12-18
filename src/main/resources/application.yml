@@ -4,6 +4,8 @@ server:
   port: 8080
   http2.enabled: on
 
+jasypt.encryptor.password: ${JASYPT.KEY}
+
 jwt:
   access-token-expire-minutes: 10
   refresh-token-expire-days: 7
@@ -26,7 +28,7 @@ spring:
     force: true  # 응답 헤더에 강제로 UTF-8을 박아버립니다.
 
   config.import:
-    - log-level.yml
+    - log.yml
 
   datasource:
     # 드라이버 클래스 (생략 가능, URL 보고 스프링이 자동 추론함)

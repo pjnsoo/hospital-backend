@@ -1,4 +1,4 @@
-package org.hospital.util.jwt;
+package org.hospital.component.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;

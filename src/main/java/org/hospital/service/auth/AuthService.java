@@ -7,9 +7,9 @@ import org.hospital.model.mapper.UserSessionMapper;
 import org.hospital.model.table.UserAccount;
 import org.hospital.model.table.UserSession;
 import org.hospital.model.mapper.UserAccountMapper;
-import org.hospital.util.jwt.JwtUtil;
-import org.hospital.util.jwt.JwtVo;
-import org.hospital.util.jwt.TokenType;
+import org.hospital.component.jwt.JwtUtil;
+import org.hospital.component.jwt.JwtVo;
+import org.hospital.component.jwt.TokenType;
 import org.springframework.security.crypto.password.PasswordEncoder; // 추가됨
 import org.springframework.stereotype.Service;
 

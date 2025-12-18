@@ -27,7 +27,7 @@ public class AuthController {
     // 1. 로그인 (Sign In)
     // ==========================================
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request,
+    public ResponseEntity<?> login(@RequestBody     LoginRequest request,
                                    HttpServletRequest httpReq) {
 
         // 헤더 파싱 및 Command 객체 조립 (Over-posting 방지)

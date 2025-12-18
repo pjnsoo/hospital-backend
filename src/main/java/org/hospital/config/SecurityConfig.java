@@ -1,6 +1,6 @@
 package org.hospital.config;
 
-import org.hospital.util.jwt.JwtUtil;
+import org.hospital.component.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -23,11 +23,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtil jwtUtil) {
-        return new JwtAuthenticationFilter(jwtUtil);
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 // 1. CORS 설정 (기존 설정 유지)
@@ -42,15 +37,15 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 4. 권한 설정 (좁은 범위부터 넓은 범위 순서로!)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()   // 인증 관련 API 허용
+                                .requestMatchers("/api/auth/**").permitAll()   // 인증 관련 API 허용
 //                        .requestMatchers("/local/**").permitAll() // 로컬 암호화 API 허용
-                        .requestMatchers("/local/**").access((authentication, context) -> {
-                            String remoteAddress = context.getRequest().getRemoteAddr();
-                            // IPv4 로컬과 IPv6 로컬 모두 허용
-                            boolean isLocal = "127.0.0.1".equals(remoteAddress) || "0:0:0:0:0:0:0:1".equals(remoteAddress);
-                            return new AuthorizationDecision(isLocal);
-                        })
-                        .anyRequest().authenticated()                  // 나머지는 다 막음
+                                .requestMatchers("/local/**").access((authentication, context) -> {
+                                    String remoteAddress = context.getRequest().getRemoteAddr();
+                                    // IPv4 로컬과 IPv6 로컬 모두 허용
+                                    boolean isLocal = "127.0.0.1".equals(remoteAddress) || "0:0:0:0:0:0:0:1".equals(remoteAddress);
+                                    return new AuthorizationDecision(isLocal);
+                                })
+                                .anyRequest().authenticated()                  // 나머지는 다 막음
                 )
                 // 5. JWT 필터 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

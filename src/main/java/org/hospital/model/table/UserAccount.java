@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hospital.model.enums.UserRole;
+import org.hospital.model.enums.UserStatus;
 
 import java.time.Instant;
 
@@ -16,9 +18,10 @@ public class UserAccount {
     long userNo;
     String username;
     String password;
-    String nickname;
-    String role;
-    String status;
+    UserRole role;
+    UserStatus status;
+    Instant pwChangedAt;
+    Instant lastAccessAt;
     Instant createdAt;
     Instant updatedAt;
 }
