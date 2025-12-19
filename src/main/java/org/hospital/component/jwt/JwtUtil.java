@@ -62,12 +62,12 @@ public class JwtUtil {
         return createToken(username, accessTokenDuration, TokenType.access, null);
     }
 
-    public JwtVo createRefreshToken(String username) {
+    public RefreshToken createRefreshToken(String username) {
         String jti = UUID.randomUUID().toString();
         String token = createToken(username, refreshTokenDuration, TokenType.refresh, jti);
 
         Instant now = Instant.now();
-        return JwtVo.builder()
+        return RefreshToken.builder()
                 .token(token)
                 .username(username)
                 .tokenType(TokenType.refresh)
@@ -99,14 +99,14 @@ public class JwtUtil {
     // ==========================================
     // 파싱 및 검증
     // ==========================================
-    public JwtVo parseToken(String token) {
+    public RefreshToken parseToken(String token) {
         try {
             Claims payload = jwtParser.parseSignedClaims(token).getPayload();
             String jti = Objects.toString(payload.get(CLAIM_JTI), null);
             String typeStr = Objects.toString(payload.get(CLAIM_TOKEN_TYPE), null);
             TokenType tokenType = (typeStr != null) ? TokenType.valueOf(typeStr) : null;
 
-            return JwtVo.builder()
+            return RefreshToken.builder()
                     .token(token)
                     .username(payload.getSubject())
                     .jti(jti)

@@ -1,4 +1,4 @@
-package org.hospital.service.dto;
+package org.hospital.service.auth;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserSignUpRequest {
+public class LoginRequest {
     private String username;
     private String password;
 }

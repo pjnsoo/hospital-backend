@@ -1,4 +1,4 @@
-package org.hospital.service.user;
+package org.hospital.service.security;
 
 import org.hospital.model.enums.UserStatus;
 import org.hospital.model.table.UserAccount;
@@ -15,18 +15,18 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
 
     @Override
     public String getUsername() {
-        return userAccount.getUsername();
+        return userAccount.username();
     }
 
     @Override
     public String getPassword() {
-        return userAccount.getPassword();
+        return userAccount.password();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 권한 정보 매핑 (예: ROLE_USER)
-        return List.of(new SimpleGrantedAuthority("ROLE_" + userAccount.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userAccount.role().name()));
     }
 
     /**
@@ -34,7 +34,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isEnabled() {
-        return userAccount.getStatus() == UserStatus.ACTIVE;
+        return userAccount.status() == UserStatus.ACTIVE;
     }
 
     /**
@@ -42,7 +42,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isAccountNonLocked() {
-        return userAccount.getStatus() != UserStatus.LOCKED;
+        return userAccount.status() != UserStatus.LOCKED;
     }
 
     /**
@@ -50,7 +50,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isAccountNonExpired() {
-        Instant accountExpiresAt = userAccount.getLastAccessAt()
+        Instant accountExpiresAt = userAccount.lastAccessAt()
                 .plus(1, ChronoUnit.YEARS);
 
         return accountExpiresAt.isAfter(Instant.now());
@@ -61,7 +61,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        Instant passwordExpiresAt = userAccount.getPwChangedAt()
+        Instant passwordExpiresAt = userAccount.pwChangedAt()
                 .plus(90, ChronoUnit.DAYS);
 
         return passwordExpiresAt.isAfter(Instant.now());
@@ -69,6 +69,6 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
 
     // 컨트롤러 편의성을 위해 추가하는 커스텀 메서드
     public Long getUserNo() {
-        return userAccount.getUserNo();
+        return userAccount.userNo();
     }
 }

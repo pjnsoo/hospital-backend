@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Data
 @Builder
-public class JwtVo {
+public class RefreshToken {
     private String token;
     private String username;
     private TokenType tokenType;

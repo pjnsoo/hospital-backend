@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hospital.service.user.UserService;
+import org.hospital.service.security.SecurityService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserService userDetailsService;
+    private final SecurityService securityService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -33,15 +33,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            JwtVo jwtVo = jwtUtil.parseToken(token);
+            RefreshToken refreshToken = jwtUtil.parseToken(token);
 
-            if (jwtVo != null && jwtVo.getTokenType() != TokenType.refresh) {
+            if (refreshToken != null && refreshToken.getTokenType() != TokenType.refresh) {
                 // 1. 토큰에서는 식별자(username)만 꺼냅니다.
-                String username = jwtVo.getUsername();
+                String username = refreshToken.getUsername();
 
                 // 2. "실시간성"을 위해 DB에서 유저와 권한 정보를 새로 가져옵니다.
                 // 만약 유저가 삭제되었거나 정지되었다면 여기서 Exception이 발생하여 입구 컷 당합니다.
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = securityService.loadUserByUsername(username);
 
                 // 3. DB에서 갓 가져온 최신 권한(getAuthorities)을 시큐리티에 넣어줍니다.
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
