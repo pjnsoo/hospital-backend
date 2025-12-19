@@ -27,7 +27,7 @@ public class AuthService {
 
     public AuthInfo login(DefaultHeader header, LoginRequest request) {
         // 1. 사용자 조회 및 비밀번호 검증 (동일)
-        UserAccount user = userAccountMapper.findByUsername(request.getUsername());
+        UserAccount user = userAccountMapper.findByUsername(UserAccount.builder().username(request.getUsername()).build());
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.password())) {
             throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }

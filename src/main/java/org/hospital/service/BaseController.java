@@ -14,7 +14,7 @@ public abstract class BaseController {
                 clientIp,
                 request.getHeader("User-Agent"),
                 request.getHeader("platform"),
-                request.getHeader("device-id")
+                request.getHeader("device-Id")
 
         );
 

@@ -11,6 +11,8 @@
                password,
                role,
                status,
+               pw_changed_at,
+               last_access_at,
                created_at,
                updated_at
         from user_account
@@ -18,7 +20,7 @@
 
     </select>
 
-    <insert id="updateSession" parameterType="org.hospital.model.table.UserSession">
+    <insert id="updateSession">
         insert into user_session (user_no, platform, device_id, jti, push_token,
                                   issued_at, expires_at, revoked, user_agent, ip,
                                   created_at, updated_at)
