@@ -1,8 +1,8 @@
 package org.hospital.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.hospital.model.enums.UserRole;
-import org.hospital.model.enums.UserStatus;
+import org.hospital.model.table.enums.UserRole;
+import org.hospital.model.table.enums.UserStatus;
 import org.hospital.model.mapper.UserAccountMapper;
 import org.hospital.model.table.UserAccount;
 import org.springframework.security.crypto.password.PasswordEncoder;

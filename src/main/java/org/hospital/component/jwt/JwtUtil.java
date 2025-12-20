@@ -73,8 +73,8 @@ public class JwtUtil {
                 .tokenType(TokenType.refresh)
                 .jti(jti)
                 .issuedAt(now)
-                // [편의성] Instant + Duration 연산 (직관적임)
                 .expiration(now.plus(refreshTokenDuration))
+                .duration(refreshTokenDuration)
                 .build();
     }
 

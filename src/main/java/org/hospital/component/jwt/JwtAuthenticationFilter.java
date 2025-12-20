@@ -35,9 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             RefreshToken refreshToken = jwtUtil.parseToken(token);
 
-            if (refreshToken != null && refreshToken.getTokenType() != TokenType.refresh) {
+            if (refreshToken != null && refreshToken.tokenType() != TokenType.refresh) {
                 // 1. 토큰에서는 식별자(username)만 꺼냅니다.
-                String username = refreshToken.getUsername();
+                String username = refreshToken.username();
 
                 // 2. "실시간성"을 위해 DB에서 유저와 권한 정보를 새로 가져옵니다.
                 // 만약 유저가 삭제되었거나 정지되었다면 여기서 Exception이 발생하여 입구 컷 당합니다.

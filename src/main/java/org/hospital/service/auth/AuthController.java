@@ -27,16 +27,21 @@ public class AuthController extends BaseController {
     // ==========================================
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest httpReq, @RequestBody LoginRequest request) {
+        boolean isSecure = httpReq.isSecure();
         DefaultHeader header = getHeader(httpReq);
 
-        AuthInfo authInfo = authService.login(header, request);
+        AuthResult authResult = authService.login(isSecure, header, request);
+
+        if(!authResult.response().success()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResult.response());
+        }
 
         // 쿠키 설정 (DTO에 있는 Duration을 그대로 사용)
-        ResponseCookie cookie = createRefreshTokenCookie(httpReq, authInfo);
+        ResponseCookie cookie = createRefreshTokenCookie(httpReq, authResult);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(Map.of("accessToken", authInfo.accessToken()));
+                .body(Map.of("accessToken", authResult.accessToken()));
     }
 
     // ==========================================
@@ -49,17 +54,18 @@ public class AuthController extends BaseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        boolean isSecure = httpReq.isSecure();
         DefaultHeader header = getHeader(httpReq);
 
         try {
 
-            AuthInfo authInfo = authService.refresh(refreshToken, header);
+            AuthResult authResult = authService.refresh(isSecure, refreshToken, header);
 
-            ResponseCookie cookie = createRefreshTokenCookie(httpReq, authInfo);
+            ResponseCookie cookie = createRefreshTokenCookie(httpReq, authResult);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(Map.of("accessToken", authInfo.accessToken()));
+                    .body(Map.of("accessToken", authResult.accessToken()));
 
         } catch (Exception e) {
             // 실패 시 쿠키 삭제
@@ -94,14 +100,14 @@ public class AuthController extends BaseController {
     }
 
     // 🛠️ Helper Methods
-    private ResponseCookie createRefreshTokenCookie(HttpServletRequest request, AuthInfo authInfo) {
+    private ResponseCookie createRefreshTokenCookie(HttpServletRequest request, AuthResult authResult) {
         boolean isSecure = request.isSecure();
 
-        return ResponseCookie.from("refreshToken", authInfo.refreshToken())
+        return ResponseCookie.from("refreshToken", authResult.refreshToken())
                 .httpOnly(true)
                 .secure(isSecure)
                 .path("/")
-                .maxAge(authInfo.refreshTokenDuration()) // Duration 객체를 바로 받아서 처리
+                .maxAge(authResult.refreshTokenDuration()) // Duration 객체를 바로 받아서 처리
                 .sameSite(isSecure ? "None" : "Lax")
                 .build();
     }

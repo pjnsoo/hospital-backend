@@ -1,4 +1,4 @@
-package org.hospital.model.enums;
+package org.hospital.model.table.enums;
 
 import lombok.AllArgsConstructor;
 

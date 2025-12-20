@@ -20,19 +20,10 @@
 
     </select>
 
-    <insert id="updateSession">
-        insert into user_session (user_no, platform, device_id, jti, push_token,
-                                  issued_at, expires_at, revoked, user_agent, ip,
-                                  created_at, updated_at)
-        values (#{userNo}, #{platform}, #{deviceId}, #{jti}, #{pushToken},
-                #{issuedAt}, #{expiresAt}, #{revoked}, #{userAgent}, #{ip},
-                now(3), now(3))
-        on duplicate key update jti        = values(jti),
-                                issued_at  = values(issued_at),
-                                expires_at = values(expires_at),
-                                revoked    = values(revoked),
-                                user_agent = values(user_agent),
-                                ip         = values(ip)
+    <insert id="existsByUsername">
+        select exists (select 1
+                       from user_account
+                       where username = #{username})
     </insert>
 
     <update id="rotateRefreshToken">

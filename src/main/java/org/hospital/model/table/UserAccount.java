@@ -3,8 +3,8 @@ package org.hospital.model.table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hospital.model.enums.UserRole;
-import org.hospital.model.enums.UserStatus;
+import org.hospital.model.table.enums.UserRole;
+import org.hospital.model.table.enums.UserStatus;
 
 import java.time.Instant;
 
