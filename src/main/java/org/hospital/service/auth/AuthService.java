@@ -1,6 +1,5 @@
 package org.hospital.service.auth;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hospital.component.jwt.JwtUtil;
@@ -11,7 +10,7 @@ import org.hospital.model.mapper.UserSessionMapper;
 import org.hospital.model.table.UserAccount;
 import org.hospital.model.table.UserSession;
 import org.hospital.service.DefaultHeader;
-import org.hospital.service.ResStatus;
+import org.hospital.service.ResReason;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class AuthService {
         // 1. 사용자 조회 및 비밀번호 검증 (동일)
         UserAccount user = userAccountMapper.findByUsername(request);
         if (user == null || !passwordEncoder.matches(request.password(), user.password())) {
-            return AuthResult.fail(isSecure, ResStatus.INVALID_ID_PW);
+            return AuthResult.fail(isSecure, ResReason.INVALID_ID_PW);
         }
 
         // 2. 토큰 생성
@@ -62,7 +61,7 @@ public class AuthService {
     public AuthResult refresh(boolean isSecure, String token, DefaultHeader header) {
         RefreshToken oldRefreshToken = jwtUtil.parseToken(token);
         if (oldRefreshToken == null || oldRefreshToken.tokenType() != TokenType.refresh) {
-            return AuthResult.fail(isSecure, ResStatus.INVALID_TOKEN);
+            return AuthResult.fail(isSecure, ResReason.INVALID_TOKEN);
         }
 
         String username = oldRefreshToken.username();
@@ -83,7 +82,7 @@ public class AuthService {
         if (affectedRows == 0) {
             log.warn("Refresh 실패 - 세션 불일치: user={}, platform={}, device={}",
                     username, header.platform(), header.deviceId());
-            return AuthResult.fail(isSecure, ResStatus.SESSION_COMPROMISED);
+            return AuthResult.fail(isSecure, ResReason.SESSION_COMPROMISED);
         }
 
         String accessToken = jwtUtil.createAccessToken(username);
@@ -103,21 +102,7 @@ public class AuthService {
         }
     }
 
-    // 🛠️ Helper Methods
-    private ResponseCookie createRefreshTokenCookie(boolean isSecure, RefreshToken refreshToken) {
-//        boolean isSecure = request.isSecure();
-
-        return ResponseCookie.from("refreshToken", refreshToken.token())
-                .httpOnly(true)
-                .secure(isSecure)
-                .path("/")
-                .maxAge(refreshToken.duration()) // Duration 객체를 바로 받아서 처리
-                .sameSite(isSecure ? "None" : "Lax")
-                .build();
-    }
-
-    private ResponseCookie deleteRefreshTokenCookie(boolean isSecure) {
-//        boolean isSecure = request.isSecure();
+    public ResponseCookie deleteRefreshTokenCookie(boolean isSecure) {
 
         return ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
@@ -127,4 +112,5 @@ public class AuthService {
                 .sameSite(isSecure ? "None" : "Lax")
                 .build();
     }
+
 }

@@ -3,15 +3,16 @@ package org.hospital.service.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hospital.service.ApiResponse;
 import org.hospital.service.BaseController;
 import org.hospital.service.DefaultHeader;
+import org.hospital.service.ResReason;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Slf4j
@@ -31,17 +32,12 @@ public class AuthController extends BaseController {
         DefaultHeader header = getHeader(httpReq);
 
         AuthResult authResult = authService.login(isSecure, header, request);
+        ApiResponse<?> response = authResult.response();
+        HttpStatus status = response.reason().httpStatus;
 
-        if(!authResult.response().success()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResult.response());
-        }
-
-        // 쿠키 설정 (DTO에 있는 Duration을 그대로 사용)
-        ResponseCookie cookie = createRefreshTokenCookie(httpReq, authResult);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(Map.of("accessToken", authResult.accessToken()));
+        return ResponseEntity.status(status)
+                .header(HttpHeaders.SET_COOKIE, authResult.cookie())
+                .body(response);
     }
 
     // ==========================================
@@ -58,21 +54,19 @@ public class AuthController extends BaseController {
         DefaultHeader header = getHeader(httpReq);
 
         try {
-
             AuthResult authResult = authService.refresh(isSecure, refreshToken, header);
 
-            ResponseCookie cookie = createRefreshTokenCookie(httpReq, authResult);
+            ApiResponse<?> response = authResult.response();
+            HttpStatus status = response.reason().httpStatus;
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(Map.of("accessToken", authResult.accessToken()));
+            return ResponseEntity.status(status)
+                    .header(HttpHeaders.SET_COOKIE, authResult.cookie())
+                    .body(response);
 
         } catch (Exception e) {
-            // 실패 시 쿠키 삭제
-            ResponseCookie deleteCookie = deleteRefreshTokenCookie(httpReq);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
-                    .build();
+//                    .header(HttpHeaders.SET_COOKIE, authResult.cookie())
+                    .body(ApiResponse.of(ResReason.INTERNAL_ERROR, null));
         }
     }
 
@@ -91,37 +85,14 @@ public class AuthController extends BaseController {
             log.error("로그아웃 DB 처리 실패: {}", e.getMessage());
         }
 
+        boolean isSecure = httpReq.isSecure();
+
         // 쿠키 삭제는 무조건 실행 (그래야 사용자 화면이 바뀜)
-        ResponseCookie cookie = deleteRefreshTokenCookie(httpReq);
+        ResponseCookie cookie = authService.deleteRefreshTokenCookie(isSecure);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(Map.of("message", "success"));
-    }
-
-    // 🛠️ Helper Methods
-    private ResponseCookie createRefreshTokenCookie(HttpServletRequest request, AuthResult authResult) {
-        boolean isSecure = request.isSecure();
-
-        return ResponseCookie.from("refreshToken", authResult.refreshToken())
-                .httpOnly(true)
-                .secure(isSecure)
-                .path("/")
-                .maxAge(authResult.refreshTokenDuration()) // Duration 객체를 바로 받아서 처리
-                .sameSite(isSecure ? "None" : "Lax")
-                .build();
-    }
-
-    private ResponseCookie deleteRefreshTokenCookie(HttpServletRequest request) {
-        boolean isSecure = request.isSecure();
-
-        return ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(isSecure)
-                .path("/")
-                .maxAge(Duration.ZERO)
-                .sameSite(isSecure ? "None" : "Lax")
-                .build();
+                .body(ApiResponse.of(ResReason.LOG_OUT, null));
     }
 
     private String getOrDefault(String value, String defaultValue) {
