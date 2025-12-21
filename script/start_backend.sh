@@ -16,7 +16,7 @@ export LOG_FILE=${PROCESS_NAME}
 echo LOG_PATH:["${LOG_PATH}/${LOG_FILE}.log"]
 
 
-PROCESS_KEYWORD="\-Dsid\=${PROCESS_NAME}"
+PROCESS_KEYWORD="\-DprocessName\=${PROCESS_NAME}"
 PID=$(pgrep -f -a "${PROCESS_KEYWORD}"|grep -v "grep\|tail"|awk '{print $1}')
 if [ -n "${PID}" ]; then
   echo "Error: ${PROCESS_NAME} is already running (PID: ${PID})"
