@@ -1,14 +1,13 @@
 package org.hospital.service.auth;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
-@Accessors(fluent = true)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class LoginRequest {
     private String username;
     private String password;

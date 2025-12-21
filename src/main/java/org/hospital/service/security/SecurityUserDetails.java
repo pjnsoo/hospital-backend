@@ -1,7 +1,7 @@
 package org.hospital.service.security;
 
-import org.hospital.model.table.enums.UserStatus;
 import org.hospital.model.table.UserAccount;
+import org.hospital.model.table.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

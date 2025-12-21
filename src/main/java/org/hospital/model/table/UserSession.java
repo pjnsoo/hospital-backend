@@ -2,14 +2,12 @@ package org.hospital.model.table;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.time.Instant;
 
 
 @Data
 @Builder
-@Accessors(fluent = true)
 public class UserSession {
     long userNo;
     String jti;

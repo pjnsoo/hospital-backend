@@ -1,12 +1,12 @@
 package org.hospital.service.user;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class UserSignUpRequest {
     private String username;
     private String password;

@@ -2,7 +2,6 @@ package org.hospital.model.table;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
 import org.hospital.model.table.enums.UserRole;
 import org.hospital.model.table.enums.UserStatus;
 
@@ -10,7 +9,6 @@ import java.time.Instant;
 
 @Data
 @Builder
-@Accessors(fluent = true)
 public class UserAccount {
     long userNo;
     String username;
