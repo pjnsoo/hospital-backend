@@ -12,12 +12,12 @@
         values (#{userNo}, #{platform}, #{deviceId}, #{jti}, #{pushToken},
                 #{issuedAt}, #{expiresAt}, #{revoked}, #{userAgent}, #{ip},
                 now(3), now(3))
-        on duplicate key update jti        = values(jti),
-                                issued_at  = values(issued_at),
-                                expires_at = values(expires_at),
-                                revoked    = values(revoked),
-                                user_agent = values(user_agent),
-                                ip         = values(ip)
+        on duplicate key update jti        = #{jti},
+                                issued_at  = #{issuedAt},
+                                expires_at = #{expiresAt},
+                                revoked    = #{revoked},
+                                user_agent = #{userAgent},
+                                ip         = #{ip}
     </insert>
 
     <update id="rotateRefreshToken">
