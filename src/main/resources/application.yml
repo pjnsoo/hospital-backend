@@ -1,7 +1,7 @@
 hostname: ${HOSTNAME:${HOST:${COMPUTERNAME:unknown}}}
 
 server:
-  port: 8080
+  port: ${SERVER.PORT}
   http2.enabled: on
 
 jasypt.encryptor.password: ${JASYPT.KEY}

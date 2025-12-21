@@ -16,6 +16,9 @@ if (!envFile.exists()) {
         
         # 절대 민감한 정보들은 yml에 직접 설정하지마세요
         # 저장소 유출 시, 위험합니다.
+        
+        # 서버마다 다를수 있기 때문에 환경변수로 설정
+        SERVER.PORT=8080
 
         # [Database Configuration]
         DB.URL=jdbc:mariadb://localhost:3306/hospital_db
