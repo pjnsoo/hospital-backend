@@ -15,18 +15,18 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
 
     @Override
     public String getUsername() {
-        return userAccount.username();
+        return userAccount.getUsername();
     }
 
     @Override
     public String getPassword() {
-        return userAccount.password();
+        return userAccount.getPassword();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 권한 정보 매핑 (예: ROLE_USER)
-        return List.of(new SimpleGrantedAuthority("ROLE_" + userAccount.role().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userAccount.getRole().name()));
     }
 
     /**
@@ -34,7 +34,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isEnabled() {
-        return userAccount.status() == UserStatus.ACTIVE;
+        return userAccount.getStatus() == UserStatus.ACTIVE;
     }
 
     /**
@@ -42,7 +42,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isAccountNonLocked() {
-        return userAccount.status() != UserStatus.LOCKED;
+        return userAccount.getStatus() != UserStatus.LOCKED;
     }
 
     /**
@@ -50,7 +50,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isAccountNonExpired() {
-        Instant accountExpiresAt = userAccount.lastAccessAt()
+        Instant accountExpiresAt = userAccount.getLastAccessAt()
                 .plus(1, ChronoUnit.YEARS);
 
         return accountExpiresAt.isAfter(Instant.now());
@@ -61,7 +61,7 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        Instant passwordExpiresAt = userAccount.pwChangedAt()
+        Instant passwordExpiresAt = userAccount.getPwChangedAt()
                 .plus(90, ChronoUnit.DAYS);
 
         return passwordExpiresAt.isAfter(Instant.now());
@@ -69,6 +69,6 @@ public record SecurityUserDetails(UserAccount userAccount) implements UserDetail
 
     // 컨트롤러 편의성을 위해 추가하는 커스텀 메서드
     public Long getUserNo() {
-        return userAccount.userNo();
+        return userAccount.getUserNo();
     }
 }
