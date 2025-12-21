@@ -31,22 +31,22 @@ public class AuthService {
     public AuthResult login(boolean isSecure, DefaultHeader header, LoginRequest request) {
         // 1. 사용자 조회 및 비밀번호 검증 (동일)
         UserAccount user = userAccountMapper.findByUsername(request);
-        if (user == null || !passwordEncoder.matches(request.password(), user.password())) {
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return AuthResult.fail(isSecure, ResReason.INVALID_ID_PW);
         }
 
         // 2. 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(user.username());
-        RefreshToken refreshToken = jwtUtil.createRefreshToken(user.username());
+        String accessToken = jwtUtil.createAccessToken(user.getUsername());
+        RefreshToken refreshToken = jwtUtil.createRefreshToken(user.getUsername());
 
         // 3. UPSERT 실행 (하나의 쿼리로 처리)
         UserSession session = UserSession.builder()
-                .userNo(user.userNo())
+                .userNo(user.getUserNo())
                 .platform(header.platform())
                 .deviceId(header.deviceId())
-                .jti(refreshToken.jti())
-                .issuedAt(refreshToken.issuedAt())
-                .expiresAt(refreshToken.expiration())
+                .jti(refreshToken.getJti())
+                .issuedAt(refreshToken.getIssuedAt())
+                .expiresAt(refreshToken.getExpiration())
                 .userAgent(header.userAgent())
                 .ip(header.clientIp())
                 .revoked(false)
@@ -60,19 +60,19 @@ public class AuthService {
 
     public AuthResult refresh(boolean isSecure, String token, DefaultHeader header) {
         RefreshToken oldRefreshToken = jwtUtil.parseToken(token);
-        if (oldRefreshToken == null || oldRefreshToken.tokenType() != TokenType.refresh) {
+        if (oldRefreshToken == null || oldRefreshToken.getTokenType() != TokenType.refresh) {
             return AuthResult.fail(isSecure, ResReason.INVALID_TOKEN);
         }
 
-        String username = oldRefreshToken.username();
+        String username = oldRefreshToken.getUsername();
         RefreshToken newRefreshToken = jwtUtil.createRefreshToken(username);
 
         // platform이 PK라면 쿼리 파라미터에 반드시 포함
         int affectedRows = userSessionMapper.rotateRefreshToken(Map.of(
-                "oldJti", oldRefreshToken.jti(),
-                "newJti", newRefreshToken.jti(),
-                "issuedAt", newRefreshToken.issuedAt(),
-                "expiresAt", newRefreshToken.expiration(),
+                "oldJti", oldRefreshToken.getJti(),
+                "newJti", newRefreshToken.getJti(),
+                "issuedAt", newRefreshToken.getIssuedAt(),
+                "expiresAt", newRefreshToken.getExpiration(),
                 "ip", header.clientIp(),
                 "userAgent", header.userAgent(),
                 "platform", header.platform(),
@@ -92,12 +92,12 @@ public class AuthService {
 
     public void logout(String token) {
         RefreshToken refreshToken = jwtUtil.parseToken(token);
-        if (refreshToken != null && refreshToken.jti() != null) {
+        if (refreshToken != null && refreshToken.getJti() != null) {
             // 영향을 받은 행의 수를 반환받음
-            int affectedRows = userSessionMapper.revokeByJti(refreshToken.jti());
+            int affectedRows = userSessionMapper.revokeByJti(refreshToken.getJti());
 
             if (affectedRows == 0) {
-                log.warn("이미 로그아웃되었거나 존재하지 않는 세션입니다. JTI: {}", refreshToken.jti());
+                log.warn("이미 로그아웃되었거나 존재하지 않는 세션입니다. JTI: {}", refreshToken.getJti());
             }
         }
     }

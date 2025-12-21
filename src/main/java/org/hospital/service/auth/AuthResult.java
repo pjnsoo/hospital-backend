@@ -16,7 +16,7 @@ public record AuthResult(
         ApiResponse<?> successResponse = ApiResponse.of(ResReason.SUCCESS, Map.of("accessToken", accessToken));
 
         ResponseCookie refreshCookie = createRefreshTokenCookie(
-                isSecure, refreshToken.token(), refreshToken.duration());
+                isSecure, refreshToken.getToken(), refreshToken.getDuration());
 
         return new AuthResult(successResponse, refreshCookie.toString());
     }
