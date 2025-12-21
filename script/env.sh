@@ -1,6 +1,5 @@
 #!/bin/bash
 
-HOSTNAME=$(hostname)
 echo HOSTNAME: ["$HOSTNAME"]
 
 #홈경로 설정

@@ -24,7 +24,7 @@ if [ -n "${PID}" ]; then
 fi
 
 JVM_OPTS="-XX:+HeapDumpOnOutOfMemoryError -XX:+UseG1GC -Xmx1024m"
-JVM_CMD="$JRE $JVM_OPTS -Dhostname=${HOSTNAME} -DprocessName=${PROCESS_NAME} -classpath $CLASSPATH $MAIN_CLASS"
+JVM_CMD="$JRE $JVM_OPTS -DprocessName=${PROCESS_NAME} -classpath $CLASSPATH $MAIN_CLASS"
 
 echo "$JVM_CMD"
 

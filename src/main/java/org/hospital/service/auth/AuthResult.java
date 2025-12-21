@@ -37,7 +37,8 @@ public record AuthResult(
                 .secure(isSecure)
                 .path("/")
                 .maxAge(duration)
-                .sameSite(isSecure ? "None" : "Lax")
+//                .sameSite(isSecure ? "None" : "Lax")
+                .sameSite("Lax")
                 .build();
     }
 
