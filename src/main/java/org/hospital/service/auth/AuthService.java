@@ -1,21 +1,21 @@
 package org.hospital.service.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hospital.component.jwt.JwtUtil;
-import org.hospital.component.jwt.RefreshToken;
-import org.hospital.component.jwt.TokenType;
 import org.hospital.model.mapper.UserAccountMapper;
-import org.hospital.model.mapper.UserSessionMapper;
 import org.hospital.model.table.UserAccount;
-import org.hospital.model.table.UserSession;
-import org.hospital.service.DefaultHeader;
+import org.hospital.service.ApiResponse;
+import org.hospital.service.security.SecurityUserDetails;
 import org.hospital.service.ResReason;
-import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Slf4j
@@ -23,94 +23,42 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final JwtUtil jwtUtil;
-    private final UserSessionMapper userSessionMapper;
     private final UserAccountMapper userAccountMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthResult login(boolean isSecure, DefaultHeader header, LoginRequest request) {
-        // 1. 사용자 조회 및 비밀번호 검증 (동일)
-        UserAccount user = userAccountMapper.findByUsername(request);
-        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return AuthResult.fail(isSecure, ResReason.INVALID_ID_PW);
+    public ApiResponse<?> login(HttpServletRequest httpReq, LoginRequest requestBody) {
+        // 1. 사용자 조회 및 비밀번호 검증
+        UserAccount user = userAccountMapper.findByUsername(requestBody);
+        if (user == null || !user.getPassWd().equals(requestBody.getPassWd())) {
+            return ApiResponse.of(ResReason.INVALID_ID_PW, null);
         }
 
-        // 2. 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(user.getUsername());
-        RefreshToken refreshToken = jwtUtil.createRefreshToken(user.getUsername());
+        // 민감 정보 제거
+        user.setPassWd(null);
+        user.setPassSalt(null);
 
-        // 3. UPSERT 실행 (하나의 쿼리로 처리)
-        UserSession session = UserSession.builder()
-                .userNo(user.getUserNo())
-                .platform(header.platform())
-                .deviceId(header.deviceId())
-                .jti(refreshToken.getJti())
-                .issuedAt(refreshToken.getIssuedAt())
-                .expiresAt(refreshToken.getExpiration())
-                .userAgent(header.userAgent())
-                .ip(header.clientIp())
-                .revoked(false)
-                .build();
+        // 2. 인증 객체 생성
+        SecurityUserDetails userDetails = new SecurityUserDetails(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
 
-        // DB에서 알아서 PK 충돌 시 UPDATE를 수행함
-        userSessionMapper.updateSession(session);
-
-        return AuthResult.success(isSecure, accessToken, refreshToken);
-    }
-
-    public AuthResult refresh(boolean isSecure, String token, DefaultHeader header) {
-        RefreshToken oldRefreshToken = jwtUtil.parseToken(token);
-        if (oldRefreshToken == null || oldRefreshToken.getTokenType() != TokenType.refresh) {
-            return AuthResult.fail(isSecure, ResReason.INVALID_TOKEN);
+        // 3. [중요] 기존 세션 무효화 및 새 세션 생성 (보안)
+        HttpSession session = httpReq.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
+        session = httpReq.getSession(true); // 새 세션 생성
 
-        String username = oldRefreshToken.getUsername();
-        RefreshToken newRefreshToken = jwtUtil.createRefreshToken(username);
+        // 4. SecurityContext 생성 및 세션 저장
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
 
-        // platform이 PK라면 쿼리 파라미터에 반드시 포함
-        int affectedRows = userSessionMapper.rotateRefreshToken(Map.of(
-                "oldJti", oldRefreshToken.getJti(),
-                "newJti", newRefreshToken.getJti(),
-                "issuedAt", newRefreshToken.getIssuedAt(),
-                "expiresAt", newRefreshToken.getExpiration(),
-                "ip", header.clientIp(),
-                "userAgent", header.userAgent(),
-                "platform", header.platform(),
-                "deviceId", header.deviceId()
-        ));
+        // 현재 쓰레드의 Holder에도 설정 (로그인 요청 처리 중 Principal 사용을 위해)
+        SecurityContextHolder.setContext(context);
 
-        if (affectedRows == 0) {
-            log.warn("Refresh 실패 - 세션 불일치: user={}, platform={}, device={}",
-                    username, header.platform(), header.deviceId());
-            return AuthResult.fail(isSecure, ResReason.SESSION_COMPROMISED);
-        }
+        // [핵심] 세션에 스프링 시큐리티 컨텍스트 박기
+        session.setAttribute("SPRING_SECURITY_CONTEXT", context);
 
-        String accessToken = jwtUtil.createAccessToken(username);
-
-        return AuthResult.success(isSecure, accessToken, newRefreshToken);
+        return ApiResponse.of(ResReason.SUCCESS, userDetails);
     }
-
-    public void logout(String token) {
-        RefreshToken refreshToken = jwtUtil.parseToken(token);
-        if (refreshToken != null && refreshToken.getJti() != null) {
-            // 영향을 받은 행의 수를 반환받음
-            int affectedRows = userSessionMapper.revokeByJti(refreshToken.getJti());
-
-            if (affectedRows == 0) {
-                log.warn("이미 로그아웃되었거나 존재하지 않는 세션입니다. JTI: {}", refreshToken.getJti());
-            }
-        }
-    }
-
-    public ResponseCookie deleteRefreshTokenCookie(boolean isSecure) {
-
-        return ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(isSecure)
-                .path("/")
-                .maxAge(Duration.ZERO)
-                .sameSite(isSecure ? "None" : "Lax")
-                .build();
-    }
-
 }

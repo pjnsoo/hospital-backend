@@ -6,18 +6,23 @@
 <mapper namespace="org.hospital.model.mapper.UserAccountMapper">
 
     <select id="findByUsername">
-        select user_no,
-               username,
-               password,
-               role,
-               status,
-               pw_changed_at,
-               last_access_at,
-               created_at,
-               updated_at
-        from user_account
-        where username = #{username}
-
+        select user_id,
+               pass_wd,
+               pass_salt,
+               grp_cd,
+               name_kor,
+               tel_no,
+               user_class,
+               usertype_cd,
+               lastupdate_dt,
+               active_yn,
+#                user_role,
+               create_user,
+               login_cnt,
+               lastlogin_dt,
+               perm_cd
+        from hs_user
+        where user_id = #{userId}
     </select>
 
     <insert id="existsByUsername">
