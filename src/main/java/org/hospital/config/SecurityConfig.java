@@ -9,7 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
@@ -36,13 +35,13 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 // 4. 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/local/**").access((authentication, context) -> {
-                                    String remoteAddress = context.getRequest().getRemoteAddr();
-                                    boolean isLocal = "127.0.0.1".equals(remoteAddress) || "0:0:0:0:0:0:0:1".equals(remoteAddress);
-                                    return new AuthorizationDecision(isLocal);
-                                })
-                                .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/local/**").access((authentication, context) -> {
+                            String remoteAddress = context.getRequest().getRemoteAddr();
+                            boolean isLocal = "127.0.0.1".equals(remoteAddress) || "0:0:0:0:0:0:0:1".equals(remoteAddress);
+                            return new AuthorizationDecision(isLocal);
+                        })
+                        .anyRequest().authenticated()
                 );
 
         return http.build();

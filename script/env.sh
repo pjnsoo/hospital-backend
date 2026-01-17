@@ -2,9 +2,6 @@
 
 echo HOSTNAME: ["$HOSTNAME"]
 
-#홈경로 설정
-PROJECT_HOME=/home/dev/hospital-backend
-
 
 # 에이전트 자바 실행 경로 설정
 JRE=/usr/bin/java

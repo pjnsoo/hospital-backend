@@ -29,7 +29,7 @@ public class AuthService {
     public ApiResponse<?> login(HttpServletRequest httpReq, LoginRequest requestBody) {
         // 1. 사용자 조회 및 비밀번호 검증
         UserAccount user = userAccountMapper.findByUsername(requestBody);
-        if (user == null || !user.getPassWd().equals(requestBody.getPassWd())) {
+        if (user == null || !passwordEncoder.matches(requestBody.getPassWd(), user.getPassWd())) {
             return ApiResponse.of(ResReason.INVALID_ID_PW, null);
         }
 

@@ -22,7 +22,7 @@ public class UserService {
         }
 
         // 2. 비밀번호 암호화 (절대 평문으로 저장 금지!)
-//        String encodedPassword = passwordEncoder.encode(req.getPassWd());
+        String encodedPassword = passwordEncoder.encode(req.getPassWd());
 
         // 3. DB 저장 (user_account 테이블)
         UserAccount newUser = UserAccount.builder()
