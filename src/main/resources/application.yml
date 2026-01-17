@@ -1,16 +1,10 @@
 hostname: ${HOSTNAME:${HOST:${COMPUTERNAME:unknown}}}
 
 server:
-  port: ${SERVER.PORT}
+  port: 8080
   http2.enabled: on
 
 jasypt.encryptor.password: ${JASYPT.KEY}
-
-jwt:
-  access-token-expire-minutes: 10
-  refresh-token-expire-days: 7
-  secret: ${JWT.SECRET}
-  issuer: ${JWT.ISSUER}
 
 mybatis:
   mapper-locations: classpath:/mappers/**/*.xml
