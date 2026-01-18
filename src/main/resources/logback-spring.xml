@@ -5,6 +5,7 @@
 
     <property name="logFile" value="${LOG_FILE:-local}"/>
     <property name="logPath" value="${LOG_PATH:-logs}"/>
+    <property name="logStdout" value="${LOG_STDOUT:-true}"/>
     <property name="FILE_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread] %-5level [%logger{35}.%method:%line] -- %msg%n"/>
 
@@ -33,9 +34,13 @@
     </appender>
 
     <root level="${logging.level.root:-INFO}">
-        <appender-ref ref="ROLLING" />
-        <!-- 운영 배포시 아래 라인 제거 -->
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING"/>
+
+        <if condition='${logStdout}'>
+            <then>
+                <appender-ref ref="STDOUT"/>
+            </then>
+        </if>
     </root>
 
 </configuration>

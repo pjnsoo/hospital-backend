@@ -16,3 +16,4 @@ echo CLASSPATH: ["$CLASSPATH"]
 #로그 경로 설정할것
 #인스턴스별로 설정할 경우, 해당 기동쉘에서 LOG_PATH 변경할 것
 export LOG_PATH=$PROJECT_HOME/logs
+export LOG_STDOUT=false

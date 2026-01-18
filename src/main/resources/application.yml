@@ -3,6 +3,7 @@ hostname: ${HOSTNAME:${HOST:${COMPUTERNAME:unknown}}}
 server:
   port: 8080
   http2.enabled: on
+  forward-headers-strategy: native #프록시가 있는 경우
 
 jasypt.encryptor.password: ${JASYPT.KEY}
 

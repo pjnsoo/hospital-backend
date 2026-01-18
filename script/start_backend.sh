@@ -28,5 +28,6 @@ JVM_CMD="$JRE $JVM_OPTS -DprocessName=${PROCESS_NAME} -classpath $CLASSPATH $MAI
 
 echo "$JVM_CMD"
 
-nohup $JVM_CMD > /dev/null 2>&1 &
+#nohup $JVM_CMD > /dev/null 2>&1 &
+nohup $JVM_CMD > $PROJECT_HOME/bin/jvm-start.log 2>&1 &
 echo "Started process: [${PROCESS_NAME}]"

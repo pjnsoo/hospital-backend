@@ -70,7 +70,7 @@ dependencies {
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5")
 
     implementation("io.github.cdimascio:dotenv-java:3.2.0")
-
+    implementation("org.codehaus.janino:janino:3.1.12")
 
 }
 
